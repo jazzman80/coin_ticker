@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'data.dart';
 
 class BottomMenu extends StatefulWidget {
   const BottomMenu({Key? key}) : super(key: key);
@@ -10,6 +11,21 @@ class BottomMenu extends StatefulWidget {
 class _BottomMenuState extends State<BottomMenu> {
   String? _selectedCurrency = 'USD';
 
+  List<DropdownMenuItem<String>> getCurrenciesList() {
+    List<DropdownMenuItem<String>> menuItems = [];
+
+    for (String item in currenciesList) {
+      DropdownMenuItem<String> newItem = DropdownMenuItem(
+        child: Text(item),
+        value: item,
+      );
+
+      menuItems.add(newItem);
+    }
+
+    return menuItems;
+  }
+
   @override
   Widget build(BuildContext context) {
     return DropdownButton<String>(
@@ -18,20 +34,7 @@ class _BottomMenuState extends State<BottomMenu> {
             color: Theme.of(context).colorScheme.onPrimary,
           ),
       dropdownColor: Theme.of(context).colorScheme.background,
-      items: [
-        DropdownMenuItem(
-          child: Text('USD'),
-          value: 'USD',
-        ),
-        DropdownMenuItem(
-          child: Text('EUR'),
-          value: 'EUR',
-        ),
-        DropdownMenuItem(
-          child: Text('RUB'),
-          value: 'RUB',
-        ),
-      ],
+      items: getCurrenciesList(),
       onChanged: (value) {
         setState(() {
           _selectedCurrency = value;
