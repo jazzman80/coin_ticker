@@ -1,8 +1,22 @@
 import 'package:flutter/material.dart';
 import 'bottom_menu.dart';
+import 'networking.dart';
 
-class MainPage extends StatelessWidget {
-  const MainPage({Key? key}) : super(key: key);
+class MainPage extends StatefulWidget {
+  MainPage({Key? key}) : super(key: key);
+
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  String _exchangeRate = '1 BTC = ? USD';
+
+  @override
+  void initState() {
+    super.initState();
+    updateExchangeRate();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +31,7 @@ class MainPage extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Text(
-              '1 BTC = ? USD',
+              _exchangeRate,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
@@ -34,5 +48,10 @@ class MainPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void updateExchangeRate() async {
+    _exchangeRate = await getExchangeRate();
+    setState(() {});
   }
 }
