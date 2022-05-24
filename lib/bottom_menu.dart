@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'data.dart';
 import 'dart:io' show Platform;
+import 'main_page.dart';
 
 class BottomMenu extends StatefulWidget {
-  const BottomMenu({Key? key}) : super(key: key);
+  BottomMenu({Key? key, required this.mainPage}) : super(key: key);
+  MainPage mainPage;
 
   @override
   State<BottomMenu> createState() => _BottomMenuState();
@@ -80,5 +82,9 @@ class _BottomMenuState extends State<BottomMenu> {
     }
 
     return menuItems;
+  }
+
+  String? getSelectedCurrency() {
+    return _selectedCurrency;
   }
 }
