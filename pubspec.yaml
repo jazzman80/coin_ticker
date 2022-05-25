@@ -24,4 +24,9 @@ dev_dependencies:
 
 flutter:
 
+  fonts:
+    - family: Jakarta
+      fonts:
+        - asset: fonts/PlusJakartaSans-VariableFont_wght.ttf
+
   uses-material-design: true

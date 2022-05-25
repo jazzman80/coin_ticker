@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'data.dart';
 import 'networking.dart';
+import 'dart:io' show Platform;
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -11,8 +12,8 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  String? _selectedCurrency = 'USD';
-  String _exchangeRate = '?';
+  String _selectedCurrency = 'USD';
+  final List<String> _exchangeRates = List.filled(cryptoCurrencies.length, '?');
 
   @override
   void initState() {
@@ -26,39 +27,62 @@ class _MainPageState extends State<MainPage> {
       appBar: AppBar(
         title: const Text('🤑 Bitcoin ticker'),
       ),
-      body: Container(
-        alignment: AlignmentDirectional.center,
-        child: Card(
-          color: Theme.of(context).colorScheme.primary,
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Text(
-              '1 BTC = $_exchangeRate $_selectedCurrency',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-            ),
-          ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: cryptoCurrencyCards(),
         ),
       ),
       bottomNavigationBar: BottomAppBar(
         child: Container(
-          height: 150.0,
+          height: 75.0,
           alignment: Alignment.center,
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.secondary,
           child: bottomMenu(),
         ),
       ),
     );
   }
 
+  //region Crypto Currency Cards
+  List<Widget> cryptoCurrencyCards() {
+    List<Widget> items = [];
+    for (int i = 0; i < cryptoCurrencies.length; i++) {
+      Card newCard = Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        color: Theme.of(context).colorScheme.primary,
+        shadowColor: Colors.white10,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Text(
+            '1 ${cryptoCurrencies[i]} = ${_exchangeRates[i]} $_selectedCurrency',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+
+      items.add(newCard);
+    }
+
+    return items;
+  }
+
+  //endregion
+
+  //region Bottom Menu
   Widget bottomMenu() {
-    /*if (Platform.isIOS) {
-      return androidCurrencyPicker();
-    } else {
+    if (Platform.isIOS) {
       return iOSCurrencyPicker();
-    }*/
-    return androidCurrencyPicker();
+    } else {
+      return androidCurrencyPicker();
+    }
   }
 
   DropdownButton<String> androidCurrencyPicker() {
@@ -71,7 +95,7 @@ class _MainPageState extends State<MainPage> {
       items: getAndroidCurrenciesList(),
       onChanged: (value) {
         setState(() {
-          _selectedCurrency = value;
+          _selectedCurrency = value!;
           updateExchangeRate();
         });
       },
@@ -83,7 +107,7 @@ class _MainPageState extends State<MainPage> {
       itemExtent: 30.0,
       onSelectedItemChanged: (value) {
         setState(() {
-          _selectedCurrency = currenciesList[value];
+          _selectedCurrency = sellingCurrencies[value];
           updateExchangeRate();
         });
       },
@@ -94,7 +118,7 @@ class _MainPageState extends State<MainPage> {
   List<DropdownMenuItem<String>> getAndroidCurrenciesList() {
     List<DropdownMenuItem<String>> menuItems = [];
 
-    for (String item in currenciesList) {
+    for (String item in sellingCurrencies) {
       DropdownMenuItem<String> newItem = DropdownMenuItem(
         child: Text(item),
         value: item,
@@ -109,7 +133,7 @@ class _MainPageState extends State<MainPage> {
   List<Text> getIOSCurrenciesList() {
     List<Text> menuItems = [];
 
-    for (String currencyName in currenciesList) {
+    for (String currencyName in sellingCurrencies) {
       Text newItem = Text(
         currencyName,
         style: TextStyle(
@@ -121,10 +145,17 @@ class _MainPageState extends State<MainPage> {
 
     return menuItems;
   }
+  //endregion
 
   void updateExchangeRate() async {
-    _exchangeRate = '?';
-    _exchangeRate = await getExchangeRate(_selectedCurrency!);
+    for (int i = 0; i < cryptoCurrencies.length; i++) {
+      _exchangeRates[i] = '?';
+    }
+
+    for (int i = 0; i < cryptoCurrencies.length; i++) {
+      _exchangeRates[i] =
+          await getExchangeRate(cryptoCurrencies[i], _selectedCurrency);
+    }
     setState(() {});
   }
 }
