@@ -78,11 +78,13 @@ class _MainPageState extends State<MainPage> {
 
   //region Bottom Menu
   Widget bottomMenu() {
-    if (Platform.isIOS) {
-      return iOSCurrencyPicker();
-    } else {
-      return androidCurrencyPicker();
-    }
+    // if (Platform.isIOS) {
+    //   return iOSCurrencyPicker();
+    // } else {
+    //   return androidCurrencyPicker();
+    // }
+
+    return androidCurrencyPicker();
   }
 
   DropdownButton<String> androidCurrencyPicker() {
