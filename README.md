@@ -10,4 +10,4 @@ using an external API.
 Это  приложение показывает курс обмена различных криптовалют в режиме реального времени, 
 используя внешний API
 
-[](/images/screenshot.png)
+![](/images/screenshot.png)
